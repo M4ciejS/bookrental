@@ -17,3 +17,24 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         echo $books;
     }
 }
+if ($_SERVER['REQUEST_METHOD'] == "POST") {
+    if (isset($_POST['title'])&&
+            isset($_POST['author'])&&
+            isset($_POST['description'])) {
+        $book=new Book($_POST['title'],$_POST['author'],$_POST['description']);
+        if($book->create($connection)){
+            echo "Udało się!";
+        }else{
+            echo "Nie udało się!";
+        }
+    }
+}
+if ($_SERVER['REQUEST_METHOD'] == "DELETE") {
+    $vars=[];
+    parse_str(file_get_contents('php://input'), $vars);
+    //var_dump($vars);
+    $book=new Book();
+    $book->loadFromDB($connection, $vars['id']);
+    var_dump($book);
+    $book->deleteFromDB($connection);
+}

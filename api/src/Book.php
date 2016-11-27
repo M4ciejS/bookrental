@@ -9,37 +9,38 @@
  *
  * @author m4ciej
  */
-class Book implements JsonSerializable{
+class Book implements JsonSerializable {
 
     private $id;
     private $title;
     private $author;
-    private $date;
+    private $description;
 
-    public function __construct() {
+    public function __construct($title = "", $author = "", $description = "") {
         $this->id = -1;
-        $this->title = "";
-        $this->author = "";
-        $this->date = "";
+        $this->title = $title;
+        $this->author = $author;
+        $this->description = $description;
     }
 
     public function jsonSerialize() {
-        $result=array("id"=>$this->id,
-            "title"=>$this->title,
-            "author"=>$this->author,
-            "date"=>$this->date);
+        $result = array("id" => $this->id,
+            "title" => $this->title,
+            "author" => $this->author,
+            "description" => $this->description);
         return $result;
     }
+
     function loadFromDB(Connection $connection, $id) {
-        $result=$connection->query("SELECT * FROM books WHERE id=".$id);
-        if($result->num_rows>0){
-            $book=$result->fetch_assoc();
-            $this->id=$book['id'];
+        $result = $connection->query("SELECT * FROM books WHERE id=" . $id);
+        if ($result->num_rows > 0) {
+            $book = $result->fetch_assoc();
+            $this->id = $book['id'];
             $this->setTitle($book['title']);
             $this->setAuthor($book['author']);
-            $this->setDate($book['date']);
+            $this->setDescription($book['description']);
             return true;
-        }else{
+        } else {
             return false;
         }
     }
@@ -49,33 +50,34 @@ class Book implements JsonSerializable{
         $result = array();
         foreach ($query as $book) {
             $b = new Book();
-            $b->id=$book['id'];
+            $b->id = $book['id'];
             $b->setTitle($book['title']);
             $b->setAuthor($book['author']);
-            $b->setDate($book['date']);
-            //region Extra reflection
-            /*$reflectionClass = new ReflectionClass($b);
-            $reflectionProperty = $reflectionClass->getProperty('id');
-            $reflectionProperty->setAccessible(true);
-            $reflectionProperty->setValue($b, $book['id']);*/
-            //endregion
-            $result[]= $b;
-            
+            $b->setDescription($book['description']);
+            $result[] = $b;
         }
-        //return json_encode($result);
         return json_encode($result);
     }
 
-    function create($conn, $name, $autor) {
+    function create(Connection $conn) {
+        if ($this->id == -1) {
+            try {
+                $conn->insertSql("books", array('title', 'author', 'description'), array($this->title, $this->author, $this->description));
+                return true;
+            } catch (Exception $e) {
+                return false;
+            }
+        }else{
+            return false;
+        }
+    }
+
+    function update(Connection $conn, $title, $autor, $description) {
         
     }
 
-    function update($conn, $name, $autor) {
-        
-    }
-
-    function delteFromDB($conn) {
-        
+    function deleteFromDB(Connection $conn) {
+        $conn->deleteSql("books", $this->id);
     }
 
     function getId() {
@@ -90,8 +92,8 @@ class Book implements JsonSerializable{
         return $this->author;
     }
 
-    function getDate() {
-        return $this->date;
+    function getDescription() {
+        return $this->description;
     }
 
     function setTitle($title) {
@@ -102,8 +104,8 @@ class Book implements JsonSerializable{
         $this->author = $author;
     }
 
-    function setDate($date) {
-        $this->date = $date;
+    function setDescription($description) {
+        $this->description = $description;
     }
 
 }

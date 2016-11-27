@@ -74,4 +74,9 @@ class Connection
 
         $this->query($sql);
     }
+    public function deleteSql($tableName, $id){
+        $id=$this->escapeString($id);
+        $sql="DELETE FROM ".$tableName." WHERE id=".$id;
+        $this->query($sql);
+    }
 }

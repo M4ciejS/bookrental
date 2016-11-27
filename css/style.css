@@ -1,0 +1,38 @@
+/*
+Made by M4ciej
+*/
+/* 
+    Created on : 2016-11-27, 16:05:15
+    Author     : m4ciej
+*/
+#messages{
+    color: red;
+    padding: 5px;
+}
+form input{
+    padding: 5px;
+    margin-bottom: 5px;
+}
+form input:hover{
+    box-shadow: 1px 1px 5px grey inset;
+}
+form button{
+    border-radius: 5px;
+}
+form button:hover{
+    background: green;
+}
+ul li{
+    padding: 5px;
+    list-style-type: square;
+}
+ul li button{
+    border-radius: 5px;
+}
+ul li button:hover{
+  background: red;  
+}
+.title{
+    font-weight: bold;
+    padding: 5px;
+}
